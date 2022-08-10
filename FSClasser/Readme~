@@ -1,0 +1,17 @@
+A general analysis framework of CEPC
+
+src/: c++ code
+
+include /: head files
+
+split/: split and combine the indivual root files for further treatment
+
+run/ : some xml examples 
+
+   run/run/: some full simulation analysis examples 
+
+   run/fastsim/: some fast simulation examples  
+
+   run/rec/: reconstruction example 
+
+   run/skim/: example for skim slcio file to extremely samll size 
