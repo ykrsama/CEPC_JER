@@ -266,6 +266,7 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_TJet4ComponentVtx;
     std::vector<Float_t> v_TJet4ComponentVty;
     std::vector<Float_t> v_TJet4ComponentVtz;
+    std::vector<Float_t> v_TRJetdE;
 
     float TMjj_Tjet;
 

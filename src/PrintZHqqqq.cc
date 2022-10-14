@@ -281,6 +281,7 @@ void PrintZHqqqq::init() {
   _outputEvt->Branch("v_TJet4ComponentPID", &v_TJet4ComponentPID);
   _outputEvt->Branch("v_TJet4ComponentGoodnessOfPID", &v_TJet4ComponentGoodnessOfPID);
   _outputEvt->Branch("v_TJet4ComponentCharge", &v_TJet4ComponentCharge);
+  _outputEvt->Branch("v_TRJetdE", &v_TRJetdE);
 
   _outputEvt->Branch("nRecoJet", &nRecoJet);
   _outputEvt->Branch("v_JetE", &v_JetE );
@@ -743,6 +744,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_TJet4ComponentPID.clear();
       v_TJet4ComponentGoodnessOfPID.clear();
       v_TJet4ComponentCharge.clear();
+      v_TRJetdE.clear();
 
       TMjj_Tjet=0;
 
@@ -1236,6 +1238,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 
       TLorentzVector TBoson(0,0,0,0);
       LCCollection *col_MCjet=evtP->getCollection("RefinedMCJets");
+      LCCollection *col_jet=evtP->getCollection("RefinedJets");
       for(unsigned int MCjeti=0; MCjeti<col_MCjet->getNumberOfElements(); MCjeti++)
       {
         ReconstructedParticle *MCjet=dynamic_cast<EVENT::ReconstructedParticle*>(col_MCjet->getElementAt(MCjeti));
@@ -1256,6 +1259,28 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
         v_TJetY.push_back(lv_truthjet.Rapidity());
 
         TBoson=TBoson+lv_truthjet;
+
+        // Get deltaE
+        float angle, angle_prev;
+        float deltaE, deltaE_a, deltaE_prev;
+        angle_prev = 99999;
+        deltaE_prev = 99999;
+        for (unsigned int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++) {
+            ReconstructedParticle *jet=dynamic_cast<EVENT::ReconstructedParticle*>(col_jet->getElementAt(jeti));
+            TLorentzVector lv_recojet(0,0,0,0);
+            lv_recojet.SetPxPyPzE(jet->getMomentum()[0], jet->getMomentum()[1], jet->getMomentum()[2], jet->getEnergy());
+            angle = lv_truthjet.Angle(lv_recojet.Vect());
+            if ( angle < angle_prev ) {
+                deltaE = lv_truthjet.E() - lv_recojet.E();
+                angle_prev = angle;
+            }
+            if ( std::fabs(lv_truthjet.E() - lv_recojet.E()) < std::fabs(deltaE_prev) ) {
+                deltaE_a = lv_truthjet.E() - lv_recojet.E();
+                deltaE_prev = deltaE_a;
+            }
+        }
+        v_TRJetdE.push_back(deltaE);
+
 
 
         ReconstructedParticleVec components=MCjet->getParticles();
@@ -1359,7 +1384,6 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       TMjj_Tjet=TBoson.M();
 
       TLorentzVector RecoBoson(0,0,0,0);
-      LCCollection *col_jet=evtP->getCollection("RefinedJets");
       for(unsigned int jeti=0; jeti<col_jet->getNumberOfElements(); jeti++)
       {
         ReconstructedParticle *jet=dynamic_cast<EVENT::ReconstructedParticle*>(col_jet->getElementAt(jeti));
