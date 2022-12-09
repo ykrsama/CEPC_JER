@@ -282,6 +282,9 @@ void PrintZHqqqq::init() {
   _outputEvt->Branch("v_TJet4ComponentGoodnessOfPID", &v_TJet4ComponentGoodnessOfPID);
   _outputEvt->Branch("v_TJet4ComponentCharge", &v_TJet4ComponentCharge);
   _outputEvt->Branch("v_TRJetdE", &v_TRJetdE);
+  _outputEvt->Branch("v_TRJetAngle", &v_TRJetAngle);
+  _outputEvt->Branch("v_TRJetdR", &v_TRJetdR);
+
 
   _outputEvt->Branch("nRecoJet", &nRecoJet);
   _outputEvt->Branch("v_JetE", &v_JetE );
@@ -745,6 +748,8 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_TJet4ComponentGoodnessOfPID.clear();
       v_TJet4ComponentCharge.clear();
       v_TRJetdE.clear();
+      v_TRJetAngle.clear();
+      v_TRJetdR.clear();
 
       TMjj_Tjet=0;
 
@@ -1235,10 +1240,14 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 //          break;
 //        }
       }
-
+      
       TLorentzVector TBoson(0,0,0,0);
       LCCollection *col_MCjet=evtP->getCollection("RefinedMCJets");
       LCCollection *col_jet=evtP->getCollection("RefinedJets");
+      // Genjet-TruthJet matching
+      std::vector<Bool_t> matched_reco; // flags
+      for (int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++)
+          matched_reco.push_back(false);
       for(unsigned int MCjeti=0; MCjeti<col_MCjet->getNumberOfElements(); MCjeti++)
       {
         ReconstructedParticle *MCjet=dynamic_cast<EVENT::ReconstructedParticle*>(col_MCjet->getElementAt(MCjeti));
@@ -1261,25 +1270,27 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
         TBoson=TBoson+lv_truthjet;
 
         // Get deltaE
-        float angle, angle_prev;
-        float deltaE, deltaE_a, deltaE_prev;
-        angle_prev = 99999;
-        deltaE_prev = 99999;
-        for (unsigned int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++) {
+        float angle, angle_min;
+        float deltaE, deltaR;
+        int matched_reco_jeti;
+        angle_min = -1;
+        for (int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++) {
+            if (matched_reco.at(jeti)) continue; // skip mattched recojet
             ReconstructedParticle *jet=dynamic_cast<EVENT::ReconstructedParticle*>(col_jet->getElementAt(jeti));
             TLorentzVector lv_recojet(0,0,0,0);
             lv_recojet.SetPxPyPzE(jet->getMomentum()[0], jet->getMomentum()[1], jet->getMomentum()[2], jet->getEnergy());
             angle = lv_truthjet.Angle(lv_recojet.Vect());
-            if ( angle < angle_prev ) {
+            if ( angle_min < 0 || angle < angle_min ) {
+                angle_min = angle;
                 deltaE = lv_truthjet.E() - lv_recojet.E();
-                angle_prev = angle;
-            }
-            if ( std::fabs(lv_truthjet.E() - lv_recojet.E()) < std::fabs(deltaE_prev) ) {
-                deltaE_a = lv_truthjet.E() - lv_recojet.E();
-                deltaE_prev = deltaE_a;
+                deltaR = lv_truthjet.DeltaR(lv_recojet);
+                matched_reco_jeti = 0;
             }
         }
+        matched_reco.at(matched_reco_jeti) = true;
         v_TRJetdE.push_back(deltaE);
+        v_TRJetAngle.push_back(angle_min);
+        v_TRJetdR.push_back(deltaR);
 
 
 
