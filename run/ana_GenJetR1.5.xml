@@ -12,13 +12,13 @@
         xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
     <execute>
         <processor name="MyLGFastMCProcessor"/>
-        <processor name="MyIsolatedLeptonFinderProcessor"/>
-        <processor name="myIsoPhotonFinder"/>
+        <!--processor name="MyIsolatedLeptonFinderProcessor"/-->
+        <!--processor name="myIsoPhotonFinder"/-->
         <processor name="MyLGMCFastJetClustering"/>
-        <processor name= "MyLGFastJetClustering"/>
+        <processor name="MyLGFastJetClustering"/>
         <processor name="VertexFinder"/>
         <processor name="JetClusteringAndFlavorTag"/>
-         <processor name="PrintZHqqqq"/>
+        <processor name="PrintZHqqqq"/>
     </execute>
 
     <global>
@@ -26,7 +26,7 @@
             /cefs/higgs/xuliang/lss/signal/E240.Pveveh_bbbb.e0.p0/m1_40.low/Reco/jobs/j001/outputfile.slcio
         </parameter>
         <!-- limit the number of processed records (run+evt): -->
-        <parameter name="MaxRecordNumber" value="6"/>
+        <parameter name="MaxRecordNumber" value="12"/>
         <parameter name="SkipNEvents" value="0"/>
         <parameter name="SupressCheck" value="false"/>
         <!--parameter name="RandomSeed" value="1234567890" /-->
@@ -69,7 +69,7 @@
         </parameter>
 
         <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-        <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+        <parameter name="Verbosity" type="string">MESSAGE </parameter>
     </processor>
 
 
@@ -121,7 +121,7 @@
         <parameter name="IsoLepCollection" type="string" lcioOutType="ReconstructedParticle">IsoLepColMC</parameter>
         <parameter name="RemainCollection" type="string" lcioOutType="ReconstructedParticle">RemainMCTruths</parameter>
         <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-        <parameter name="Verbosity" type="string">DEBUG0</parameter>
+        <parameter name="Verbosity" type="string">MESSAGE</parameter>
     </processor>
 
     <processor name="MyLGFastJetClustering" type="LGFastJetClustering">
@@ -152,7 +152,7 @@
         <parameter name="IsoLepCollection" type="string" lcioOutType="ReconstructedParticle">IsoLepCol_2</parameter>
         <parameter name="RemainCollection" type="string" lcioOutType="ReconstructedParticle">RemainPFOs_2</parameter>
         <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-        <parameter name="Verbosity" type="string">DEBUG</parameter>
+        <parameter name="Verbosity" type="string">MESSAGE</parameter>
     </processor>
 
 

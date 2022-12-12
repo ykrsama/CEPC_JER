@@ -284,16 +284,16 @@ void PrintZHqqqq::init() {
 
 
   _outputEvt->Branch("nFastJet", &nFastJet);
-  _outputEvt->Branch("v_FastJetE", &v_TJetE );
-  _outputEvt->Branch("v_FastJetPx", &v_TJetPx);
-  _outputEvt->Branch("v_FastJetPy", &v_TJetPy);
-  _outputEvt->Branch("v_FastJetPz", &v_TJetPz);
-  _outputEvt->Branch("v_FastJetP", &v_TJetP);
-  _outputEvt->Branch("v_FastJetPt", &v_TJetPt);
-  _outputEvt->Branch("v_FastJetEta", &v_TJetEta);
-  _outputEvt->Branch("v_FastJetY", &v_TJetY);
-  _outputEvt->Branch("v_FastJetTheta", &v_TJetTheta);
-  _outputEvt->Branch("v_FastJetPhi", &v_TJetPhi);
+  _outputEvt->Branch("v_FastJetE", &v_FastJetE );
+  _outputEvt->Branch("v_FastJetPx", &v_FastJetPx);
+  _outputEvt->Branch("v_FastJetPy", &v_FastJetPy);
+  _outputEvt->Branch("v_FastJetPz", &v_FastJetPz);
+  _outputEvt->Branch("v_FastJetP", &v_FastJetP);
+  _outputEvt->Branch("v_FastJetPt", &v_FastJetPt);
+  _outputEvt->Branch("v_FastJetEta", &v_FastJetEta);
+  _outputEvt->Branch("v_FastJetY", &v_FastJetY);
+  _outputEvt->Branch("v_FastJetTheta", &v_FastJetTheta);
+  _outputEvt->Branch("v_FastJetPhi", &v_FastJetPhi);
 
 
   _outputEvt->Branch("v_TRJetdE", &v_TRJetdE);
@@ -416,8 +416,9 @@ void PrintZHqqqq::init() {
   _outputEvt->Branch("v_Jet4ComponentCharge", &v_Jet4ComponentCharge);
 
 
-  _outputEvt->Branch("TMjj_Tjet", &TMjj_Tjet);
-  _outputEvt->Branch("TMjj_jet", &TMjj_jet);
+  _outputEvt->Branch("TM4j_Tjet", &TM4j_Tjet);
+  _outputEvt->Branch("TM4j_jet", &TM4j_jet);
+  _outputEvt->Branch("TM4j_FastJet",&TM4j_FastJet);
 
 
 
@@ -531,6 +532,16 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 
     try
     {
+
+        // DEBUG
+        LCCollection* col_MCTruth = evtP->getCollection("RecoMCTruths");
+        double Evis = 0;
+        for (int i = 0; i < col_MCTruth->getNumberOfElements(); i++) {
+            ReconstructedParticle *tMCP = dynamic_cast<ReconstructedParticle*>(col_MCTruth->getElementAt(i));
+            Evis += tMCP->getEnergy();
+        }
+        std::cout << "RecoMCTruths Evis = " << Evis << std::endl;
+
       LCCollection* col_PFOs = evtP->getCollection( _colName ) ;
 
       _nPFOs=col_PFOs->getNumberOfElements();
@@ -763,7 +774,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_TJet4ComponentGoodnessOfPID.clear();
       v_TJet4ComponentCharge.clear();
 
-      TMjj_Tjet=0;
+        TM4j_Tjet=0;
 
 
       nFastJet=0;
@@ -778,7 +789,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_FastJetTheta.clear();
       v_FastJetPhi.clear();
 
-      TMjj_FastJet=0;
+        TM4j_FastJet=0;
 
       v_TRJetdE.clear();
       v_TRJetAngle.clear();
@@ -900,7 +911,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_Jet4ComponentGoodnessOfPID.clear();
       v_Jet4ComponentCharge.clear();
 
-      TMjj_jet=0;
+        TM4j_jet=0;
 
 
       v_RecoPhotonE.clear();
@@ -1425,7 +1436,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 
 
       }
-      TMjj_Tjet=TBoson.M();
+        TM4j_Tjet=TBoson.M();
 
       TLorentzVector FastJetBoson(0,0,0,0);
       for(unsigned int fastjeti = 0; fastjeti < col_FastJet->getNumberOfElements(); fastjeti++) {
@@ -1447,7 +1458,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
             FastJetBoson = FastJetBoson + lv_fastjet;
 
       }
-      TMjj_FastJet = FastJetBoson.M();
+        TM4j_FastJet = FastJetBoson.M();
 
       TLorentzVector RecoBoson(0,0,0,0);
       for(unsigned int jeti=0; jeti<col_jet->getNumberOfElements(); jeti++)
@@ -1684,7 +1695,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 
         }
       }
-      TMjj_jet=RecoBoson.M();
+        TM4j_jet=RecoBoson.M();
 
 
     //  if(_TotalEnMCP-250==0.01 && hasphoton==true)

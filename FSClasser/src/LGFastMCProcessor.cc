@@ -219,6 +219,7 @@ namespace marlin{
 			pdgidlist.clear();
 		}
 		double VisEn=0;
+        TLorentzVector VisP4 = TLorentzVector(0,0,0,0);
 		for(int i=0; i<mcpCol->getNumberOfElements() ; i++){
 
 			MCParticle* mcp = dynamic_cast<MCParticle*> ( mcpCol->getElementAt( i ) ) ;
@@ -268,8 +269,8 @@ namespace marlin{
 				if(pdgcode ==   313 ) h_Momentum[13]->Fill(pmag,1.0); 
 				if(pdgcode ==   111 ) h_Momentum[14]->Fill(pmag,1.0); 
 			}
-			if( mcp->getGeneratorStatus() == 1 ) { // stable particles only 
-				if( m_makeplots>0 ) { 
+			if( mcp->getGeneratorStatus() == 1 && pdgCODE != 12 && pdgCODE != 14 && pdgCODE != 16) { // stable particles only
+				if( m_makeplots>0 ) {
 					if(pdgcode ==    22 ) h_Momentum[ 0]->Fill(pmag,1.0); 
 					if(pdgcode ==    11 ) h_Momentum[ 1]->Fill(pmag,1.0); 
 					if(pdgcode ==   -11 ) h_Momentum[ 2]->Fill(pmag,1.0); 
@@ -284,6 +285,7 @@ namespace marlin{
 
 				if( rec != 0 ) {
 					VisEn+=rec->getEnergy();
+                    VisP4 += TLorentzVector(rec->getMomentum(), rec->getEnergy());
 					recVec->addElement( rec ) ;
 					relNav.addRelation( rec , mcp ) ;
 					TLorentzVector p4(rec->getMomentum(), rec->getEnergy());
@@ -322,7 +324,8 @@ namespace marlin{
 			}
 
 		}
-		//printf("VisEn = %10.2f\n",VisEn);
+		printf("VisEn = %10.2f\n",VisEn);
+        std::cout << "VisM = " << VisP4.M() << std::endl;
 		recVec->setDefault   ( true   ) ; // only true works, false has track/cluster but without particle
 		recVec->setSubset    ( false  ) ; // can make reasonble slcio file with PFO collection/LCRelation !!! 
 		recVec->setTransient ( false  ) ;

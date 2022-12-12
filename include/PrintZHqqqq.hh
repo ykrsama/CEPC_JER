@@ -267,7 +267,7 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_TJet4ComponentVty;
     std::vector<Float_t> v_TJet4ComponentVtz;
 
-    float TMjj_Tjet;
+    float TM4j_Tjet;
 
 
     int nFastJet;
@@ -281,7 +281,7 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_FastJetY;
     std::vector<Float_t> v_FastJetTheta;
     std::vector<Float_t> v_FastJetPhi;
-    float TMjj_FastJet;
+    float TM4j_FastJet;
 
     std::vector<Float_t> v_TRJetdE;
     std::vector<Float_t> v_TRJetAngle;
@@ -402,7 +402,7 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_Jet4ComponentVty;
     std::vector<Float_t> v_Jet4ComponentVtz;
 
-    float TMjj_jet;//add by PZ
+    float TM4j_jet;//add by PZ
 
     int _nRecoPhoton;
     std::vector<Float_t> v_RecoPhotonE;
