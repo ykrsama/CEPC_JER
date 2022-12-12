@@ -281,6 +281,21 @@ void PrintZHqqqq::init() {
   _outputEvt->Branch("v_TJet4ComponentPID", &v_TJet4ComponentPID);
   _outputEvt->Branch("v_TJet4ComponentGoodnessOfPID", &v_TJet4ComponentGoodnessOfPID);
   _outputEvt->Branch("v_TJet4ComponentCharge", &v_TJet4ComponentCharge);
+
+
+  _outputEvt->Branch("nFastJet", &nFastJet);
+  _outputEvt->Branch("v_FastJetE", &v_TJetE );
+  _outputEvt->Branch("v_FastJetPx", &v_TJetPx);
+  _outputEvt->Branch("v_FastJetPy", &v_TJetPy);
+  _outputEvt->Branch("v_FastJetPz", &v_TJetPz);
+  _outputEvt->Branch("v_FastJetP", &v_TJetP);
+  _outputEvt->Branch("v_FastJetPt", &v_TJetPt);
+  _outputEvt->Branch("v_FastJetEta", &v_TJetEta);
+  _outputEvt->Branch("v_FastJetY", &v_TJetY);
+  _outputEvt->Branch("v_FastJetTheta", &v_TJetTheta);
+  _outputEvt->Branch("v_FastJetPhi", &v_TJetPhi);
+
+
   _outputEvt->Branch("v_TRJetdE", &v_TRJetdE);
   _outputEvt->Branch("v_TRJetAngle", &v_TRJetAngle);
   _outputEvt->Branch("v_TRJetdR", &v_TRJetdR);
@@ -747,11 +762,28 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_TJet4ComponentPID.clear();
       v_TJet4ComponentGoodnessOfPID.clear();
       v_TJet4ComponentCharge.clear();
+
+      TMjj_Tjet=0;
+
+
+      nFastJet=0;
+      v_FastJetE.clear();
+      v_FastJetPx.clear();
+      v_FastJetPy.clear();
+      v_FastJetPz.clear();
+      v_FastJetP.clear();
+      v_FastJetPt.clear();
+      v_FastJetEta.clear();
+      v_FastJetY.clear();
+      v_FastJetTheta.clear();
+      v_FastJetPhi.clear();
+
+      TMjj_FastJet=0;
+
       v_TRJetdE.clear();
       v_TRJetAngle.clear();
       v_TRJetdR.clear();
 
-      TMjj_Tjet=0;
 
       nRecoJet=0;
       nJet1Component=0;
@@ -1241,13 +1273,14 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 //        }
       }
       
-      TLorentzVector TBoson(0,0,0,0);
       LCCollection *col_MCjet=evtP->getCollection("RefinedMCJets");
+      LCCollection *col_FastJet = evtP->getCollection("RefinedFastJets");
       LCCollection *col_jet=evtP->getCollection("RefinedJets");
-      // Genjet-TruthJet matching
+      // Genjet-RecoJet matching
       std::vector<Bool_t> matched_reco; // flags
       for (int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++)
           matched_reco.push_back(false);
+      TLorentzVector TBoson(0,0,0,0);
       for(unsigned int MCjeti=0; MCjeti<col_MCjet->getNumberOfElements(); MCjeti++)
       {
         ReconstructedParticle *MCjet=dynamic_cast<EVENT::ReconstructedParticle*>(col_MCjet->getElementAt(MCjeti));
@@ -1393,6 +1426,28 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
 
       }
       TMjj_Tjet=TBoson.M();
+
+      TLorentzVector FastJetBoson(0,0,0,0);
+      for(unsigned int fastjeti = 0; fastjeti < col_FastJet->getNumberOfElements(); fastjeti++) {
+            ReconstructedParticle *fastjet = dynamic_cast<EVENT::ReconstructedParticle*>(col_FastJet->getElementAt(fastjeti));
+            nFastJet += 1;
+            TLorentzVector lv_fastjet(0,0,0,0);
+            lv_fastjet.SetPxPyPzE(fastjet->getMomentum()[0], fastjet->getMomentum()[1], fastjet->getMomentum()[2], fastjet->getEnergy());
+            v_FastJetE.push_back(lv_fastjet.E());
+            v_FastJetPx.push_back(lv_fastjet.Px());
+            v_FastJetPy.push_back(lv_fastjet.Py());
+            v_FastJetPz.push_back(lv_fastjet.Pz());
+            v_FastJetP.push_back(lv_fastjet.P());
+            v_FastJetPt.push_back(lv_fastjet.Pt());
+            v_FastJetEta.push_back(lv_fastjet.Eta());
+            v_FastJetPhi.push_back(lv_fastjet.Phi());
+            v_FastJetTheta.push_back(lv_fastjet.Theta());
+            v_FastJetY.push_back(lv_fastjet.Y());
+
+            FastJetBoson = FastJetBoson + lv_fastjet;
+
+      }
+      TMjj_FastJet = FastJetBoson.M();
 
       TLorentzVector RecoBoson(0,0,0,0);
       for(unsigned int jeti=0; jeti<col_jet->getNumberOfElements(); jeti++)

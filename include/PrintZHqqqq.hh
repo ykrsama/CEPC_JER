@@ -266,11 +266,26 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_TJet4ComponentVtx;
     std::vector<Float_t> v_TJet4ComponentVty;
     std::vector<Float_t> v_TJet4ComponentVtz;
+
+    float TMjj_Tjet;
+
+
+    int nFastJet;
+    std::vector<Float_t> v_FastJetE;
+    std::vector<Float_t> v_FastJetPx;
+    std::vector<Float_t> v_FastJetPy;
+    std::vector<Float_t> v_FastJetPz;
+    std::vector<Float_t> v_FastJetP;
+    std::vector<Float_t> v_FastJetPt;
+    std::vector<Float_t> v_FastJetEta;
+    std::vector<Float_t> v_FastJetY;
+    std::vector<Float_t> v_FastJetTheta;
+    std::vector<Float_t> v_FastJetPhi;
+    float TMjj_FastJet;
+
     std::vector<Float_t> v_TRJetdE;
     std::vector<Float_t> v_TRJetAngle;
     std::vector<Float_t> v_TRJetdR;
-
-    float TMjj_Tjet;
 
     int nRecoJet, nJet1Component, nJet2Component, nJet3Component, nJet4Component;//add by PZ
     std::vector<Float_t> v_JetE;
