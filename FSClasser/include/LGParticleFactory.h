@@ -8,6 +8,9 @@
 #include "marlin/IRecoParticleFactory.h"
 #include "marlin/IFourVectorSmearer.h"
 #include "marlin/FastMCParticleType.h"
+#include "IMPL/ReconstructedParticleImpl.h"
+#include "IMPL/ClusterImpl.h"
+#include "IMPL/TrackImpl.h"
 
 
 namespace marlin {
@@ -63,6 +66,9 @@ namespace marlin {
 			bool   _smear          ;
 			double _momentumCut    ;
 			bool   _rejectNeutrino ;
+            std::vector<IMPL::ReconstructedParticleImpl*> v_dummy_part;
+            std::vector<IMPL::TrackImpl*> v_dummy_trk;
+            std::vector<IMPL::ClusterImpl*> v_dummy_clu;
 
 	};
 

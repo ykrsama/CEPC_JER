@@ -3,9 +3,7 @@
 #ifdef MARLIN_CLHEP  // only if CLHEP is available !
 
 #include <cstdlib>
-#include "IMPL/ReconstructedParticleImpl.h"
-#include "IMPL/ClusterImpl.h"
-#include "IMPL/TrackImpl.h"
+
 
 #include "LGParticleFactory.h"
 #include <iostream>
@@ -178,22 +176,25 @@ namespace marlin{
 			rec->setReferencePoint( vtx ) ;
 
 			rec->setType(   mcp->getPDG() ) ;
-			ReconstructedParticleImpl * dummy = new ReconstructedParticleImpl() ; 
-			dummy->id();
-			rec->addParticle( dummy   ) ; // dummy track to make it look like a real particle !!! memory leakage
-			/*
+			ReconstructedParticleImpl* dummy_part = new ReconstructedParticleImpl() ;
+            v_dummy_part.push_back(dummy_part);
+			dummy_part->id();
+			rec->addParticle( dummy_part ) ; // dummy track to make it look like a real particle
+			//
 			if( fabs(mcp->getCharge())>0.01 ) {
-				TrackImpl * dummy = new TrackImpl() ; 
-				dummy->id();
+				TrackImpl* dummy_trk = new TrackImpl() ;
+                v_dummy_trk.push_back(dummy_trk);
+				dummy_trk->id();
 				//std::cout<<"cid = "<<dummy->id()<<std::endl;
-				rec->addTrack  ( dummy  ) ; // dummy track to make it look like a real particle !!! memory leakage
+				rec->addTrack  ( dummy_trk  ) ; // dummy track to make it look like a real particlea !!! memory leakage
 			}
 			{
-				ClusterImpl * dummy = new ClusterImpl() ; 
-				//std::cout<<"nid = "<<dummy->id()<<std::endl;
-				rec->addCluster( dummy ) ; // dummy cluster to make it look like a real  particle !!! memory leakage
+				ClusterImpl* dummy_clu = new ClusterImpl() ;
+                v_dummy_clu.push_back(dummy_clu);
+				//std::cout<<"nid = "<<dummy->id()<<std::endl;a
+				rec->addCluster( dummy_clu ) ; // dummy cluster to make it look like a real  particle !!! memory leakage
 			}
-			*/
+			//
 		}
 		//
 		return  rec ;

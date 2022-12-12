@@ -69,7 +69,7 @@ IF( INSTALL_DOC AND EXISTS "${PROJECT_SOURCE_DIR}/doc/CMakeLists.txt" )
     ADD_SUBDIRECTORY( ./doc )
 ENDIF()
 
-
+ADD_SUBDIRECTORY(FSClasser)
 
 ### LIBRARY #################################################################
 
