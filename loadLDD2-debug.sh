@@ -6,4 +6,4 @@ source /cvmfs/cepc.ihep.ac.cn/software/cepcenv/setup.sh
 PACKAGEDIR=/workfs2/cepc/xuliang/processor/GenJet
 #export MARLIN_DLL=$MARLIN_DLL:${PACKAGEDIR}/FSClasser/lib/libFSClasser.so
 export MARLIN_DLL=$MARLIN_DLL:${PACKAGEDIR}/build-debug/lib/libmWMeasurement.so
-export MARLIN_DLL=$MARLIN_DLL:${PACKAGEDIR}/build-debug/lib/libmWMeasurementFSClasser.so
+export MARLIN_DLL=$MARLIN_DLL:${PACKAGEDIR}/build-debug/lib/libFSClasser.so

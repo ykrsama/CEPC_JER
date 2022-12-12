@@ -180,7 +180,7 @@ namespace marlin{
             v_dummy_part.push_back(dummy_part);
 			dummy_part->id();
 			rec->addParticle( dummy_part ) ; // dummy track to make it look like a real particle
-			//
+			/*
 			if( fabs(mcp->getCharge())>0.01 ) {
 				TrackImpl* dummy_trk = new TrackImpl() ;
                 v_dummy_trk.push_back(dummy_trk);
@@ -194,7 +194,7 @@ namespace marlin{
 				//std::cout<<"nid = "<<dummy->id()<<std::endl;a
 				rec->addCluster( dummy_clu ) ; // dummy cluster to make it look like a real  particle !!! memory leakage
 			}
-			//
+			*/
 		}
 		//
 		return  rec ;

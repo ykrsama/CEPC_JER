@@ -10,9 +10,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 
 # project version
-SET( ${PROJECT_NAME}_VERSION_MAJOR 0 )
-SET( ${PROJECT_NAME}_VERSION_MINOR 1 )
-SET( ${PROJECT_NAME}_VERSION_PATCH 0 )
+SET( FSClasser_VERSION_MAJOR 0 )
+SET( FSClasser_VERSION_MINOR 1 )
+SET( FSClasser_VERSION_PATCH 0 )
 
 
 ### DEPENDENCIES ############################################################
@@ -83,8 +83,8 @@ INCLUDE_DIRECTORIES( ./include )
 
 # add library
 AUX_SOURCE_DIRECTORY( ./src library_sources )
-ADD_SHARED_LIBRARY( ${PROJECT_NAME}FSClasser ${library_sources} )
-INSTALL_SHARED_LIBRARY( ${PROJECT_NAME}FSClasser DESTINATION lib )
+ADD_SHARED_LIBRARY( FSClasser ${library_sources} )
+INSTALL_SHARED_LIBRARY( FSClasser DESTINATION lib )
 
 # display some variables and write them to cache
 DISPLAY_STD_VARIABLES()

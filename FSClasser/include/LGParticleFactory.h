@@ -67,8 +67,8 @@ namespace marlin {
 			double _momentumCut    ;
 			bool   _rejectNeutrino ;
             std::vector<IMPL::ReconstructedParticleImpl*> v_dummy_part;
-            std::vector<IMPL::TrackImpl*> v_dummy_trk;
-            std::vector<IMPL::ClusterImpl*> v_dummy_clu;
+//            std::vector<IMPL::TrackImpl*> v_dummy_trk;
+//            std::vector<IMPL::ClusterImpl*> v_dummy_clu;
 
 	};
 
