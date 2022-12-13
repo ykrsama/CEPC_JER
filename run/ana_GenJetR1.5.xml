@@ -99,7 +99,7 @@
         <!-- <parameter name="Algorithm" type="string">antikt_algorithm </parameter> -->
         <parameter name="Algorithm" type="string">ee_kt_algorithm</parameter>
         <!--debug printout-->
-        <parameter name="Debug" type="int">1</parameter>
+        <parameter name="Debug" type="int">2</parameter>
         <!--max nb of jets-->
         <parameter name="NJets" type="int">4</parameter>
         <!--R Parameter-->
