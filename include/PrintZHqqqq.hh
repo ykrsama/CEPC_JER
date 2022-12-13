@@ -43,6 +43,8 @@ class PrintZHqqqq  : public marlin::Processor
 
     float getConeEnergy( ReconstructedParticle* pfo, LCCollection* _pfoCol) ;
 
+    std::vector<std::pair<ReconstructedParticle*, ReconstructedParticle*> > MatchReco2toReco1(LCCollection *col_reco1, LCCollection *col_reco2);
+
     std::string _treeFileName;
     std::string _treeName;
     std::string _colName;
@@ -283,9 +285,6 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_FastJetPhi;
     float TM4j_FastJet;
 
-    std::vector<Float_t> v_TRJetdE;
-    std::vector<Float_t> v_TRJetAngle;
-    std::vector<Float_t> v_TRJetdR;
 
     int nRecoJet, nJet1Component, nJet2Component, nJet3Component, nJet4Component;//add by PZ
     std::vector<Float_t> v_JetE;
@@ -403,6 +402,17 @@ class PrintZHqqqq  : public marlin::Processor
     std::vector<Float_t> v_Jet4ComponentVtz;
 
     float TM4j_jet;//add by PZ
+
+
+    std::vector<Float_t> v_TRJetdE;
+    std::vector<Float_t> v_TRJetdR;
+    std::vector<Float_t> v_TFJetdE;
+    std::vector<Float_t> v_TFJetdR;
+    std::vector<Float_t> v_FRJetdE;
+    std::vector<Float_t> v_FRJetdR;
+    std::vector<std::pair<ReconstructedParticle*, ReconstructedParticle*> > v_TRJetpair;
+    std::vector<std::pair<ReconstructedParticle*, ReconstructedParticle*> > v_TFJetpair;
+    std::vector<std::pair<ReconstructedParticle*, ReconstructedParticle*> > v_FRJetpair;
 
     int _nRecoPhoton;
     std::vector<Float_t> v_RecoPhotonE;

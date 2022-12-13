@@ -296,10 +296,6 @@ void PrintZHqqqq::init() {
   _outputEvt->Branch("v_FastJetPhi", &v_FastJetPhi);
 
 
-  _outputEvt->Branch("v_TRJetdE", &v_TRJetdE);
-  _outputEvt->Branch("v_TRJetAngle", &v_TRJetAngle);
-  _outputEvt->Branch("v_TRJetdR", &v_TRJetdR);
-
 
   _outputEvt->Branch("nRecoJet", &nRecoJet);
   _outputEvt->Branch("v_JetE", &v_JetE );
@@ -421,6 +417,12 @@ void PrintZHqqqq::init() {
   _outputEvt->Branch("TM4j_FastJet",&TM4j_FastJet);
 
 
+  _outputEvt->Branch("v_TRJetdE", &v_TRJetdE);
+  _outputEvt->Branch("v_TRJetdR", &v_TRJetdR);
+  _outputEvt->Branch("v_TFJetdE",&v_TFJetdE);
+  _outputEvt->Branch("v_TFJetdR",&v_TFJetdR);
+  _outputEvt->Branch("v_FRJetdE",&v_FRJetdE);
+  _outputEvt->Branch("v_FRJetdR",&v_FRJetdR);
 
   _outputEvt->Branch("NRecoPhoton", &_nRecoPhoton, "NRecoPhoton/I");
 
@@ -789,12 +791,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_FastJetTheta.clear();
       v_FastJetPhi.clear();
 
-        TM4j_FastJet=0;
-
-      v_TRJetdE.clear();
-      v_TRJetAngle.clear();
-      v_TRJetdR.clear();
-
+      TM4j_FastJet=0;
 
       nRecoJet=0;
       nJet1Component=0;
@@ -959,6 +956,12 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       v_RecoPFOCharge.clear();
 
 
+      v_TRJetdE.clear();
+      v_TRJetdR.clear();
+      v_TFJetdE.clear();
+      v_TFJetdR.clear();
+      v_FRJetdE.clear();
+      v_FRJetdR.clear();
 
       LCCollection * col_MCP = evtP->getCollection("MCParticle");
       TLorentzVector M_jj(0, 0, 0, 0);
@@ -1287,10 +1290,7 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       LCCollection *col_MCjet=evtP->getCollection("RefinedMCJets");
       LCCollection *col_FastJet = evtP->getCollection("RefinedFastJets");
       LCCollection *col_jet=evtP->getCollection("RefinedJets");
-      // Genjet-RecoJet matching
-      std::vector<Bool_t> matched_reco; // flags
-      for (int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++)
-          matched_reco.push_back(false);
+
       TLorentzVector TBoson(0,0,0,0);
       for(unsigned int MCjeti=0; MCjeti<col_MCjet->getNumberOfElements(); MCjeti++)
       {
@@ -1312,31 +1312,6 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
         v_TJetY.push_back(lv_truthjet.Rapidity());
 
         TBoson=TBoson+lv_truthjet;
-
-        // Get deltaE
-        float angle, angle_min;
-        float deltaE, deltaR;
-        int matched_reco_jeti;
-        angle_min = -1;
-        for (int jeti=0; jeti < col_jet->getNumberOfElements(); jeti++) {
-            if (matched_reco.at(jeti)) continue; // skip mattched recojet
-            ReconstructedParticle *jet=dynamic_cast<EVENT::ReconstructedParticle*>(col_jet->getElementAt(jeti));
-            TLorentzVector lv_recojet(0,0,0,0);
-            lv_recojet.SetPxPyPzE(jet->getMomentum()[0], jet->getMomentum()[1], jet->getMomentum()[2], jet->getEnergy());
-            angle = lv_truthjet.Angle(lv_recojet.Vect());
-            if ( angle_min < 0 || angle < angle_min ) {
-                angle_min = angle;
-                deltaE = lv_truthjet.E() - lv_recojet.E();
-                deltaR = lv_truthjet.DeltaR(lv_recojet);
-                matched_reco_jeti = 0;
-            }
-        }
-        matched_reco.at(matched_reco_jeti) = true;
-        v_TRJetdE.push_back(deltaE);
-        v_TRJetAngle.push_back(angle_min);
-        v_TRJetdR.push_back(deltaR);
-
-
 
         ReconstructedParticleVec components=MCjet->getParticles();
         if(MCjeti==0){
@@ -1697,8 +1672,29 @@ void PrintZHqqqq::processEvent( LCEvent * evtP )
       }
         TM4j_jet=RecoBoson.M();
 
+      v_TRJetpair = MatchReco2toReco1(col_MCjet, col_jet);
+      v_TFJetpair = MatchReco2toReco1(col_MCjet, col_FastJet);
+      v_FRJetpair = MatchReco2toReco1(col_FastJet, col_jet);
+      TLorentzVector lv_truthjet, lv_fastjet, lv_recojet;
+      for (int i = 0; i < v_TRJetpair.size(); i++) {
+        // TruthJet vs RecoJet
+        lv_truthjet = TLorentzVector(v_TRJetpair.at(i).first->getMomentum(), v_TRJetpair.at(i).first->getEnergy());
+        lv_recojet = TLorentzVector(v_TRJetpair.at(i).second->getMomentum(), v_TRJetpair.at(i).second->getEnergy());
+        v_TRJetdE.push_back(lv_truthjet.E() - lv_recojet.E());
+        v_TRJetdR.push_back(lv_truthjet.DeltaR(lv_recojet));
+        // TruthJet vs FastJet
+        lv_truthjet = TLorentzVector(v_TFJetpair.at(i).first->getMomentum(), v_TFJetpair.at(i).first->getEnergy());
+        lv_fastjet = TLorentzVector(v_TFJetpair.at(i).second->getMomentum(), v_TFJetpair.at(i).second->getEnergy());
+        v_TFJetdE.push_back(lv_truthjet.E() - lv_fastjet.E());
+        v_TFJetdR.push_back(lv_truthjet.DeltaR(lv_fastjet));
+        // FastJet vs RecoJet
+        lv_fastjet = TLorentzVector(v_FRJetpair.at(i).first->getMomentum(), v_FRJetpair.at(i).first->getEnergy());
+        lv_recojet = TLorentzVector(v_FRJetpair.at(i).second->getMomentum(), v_FRJetpair.at(i).second->getEnergy());
+        v_FRJetdE.push_back(lv_fastjet.E() - lv_recojet.E());
+        v_FRJetdR.push_back(lv_fastjet.DeltaR(lv_recojet));
+      }
 
-    //  if(_TotalEnMCP-250==0.01 && hasphoton==true)
+        //  if(_TotalEnMCP-250==0.01 && hasphoton==true)
       if(fabs(_TotalEnMCP-250)<0.01 && hasphoton==true)
       {
         _hasISR=1;
@@ -2020,4 +2016,33 @@ void PrintZHqqqq::end()
     tree_file->Close();
   }
 
+}
+
+std::vector<std::pair<ReconstructedParticle*, ReconstructedParticle*> > PrintZHqqqq::MatchReco2toReco1(LCCollection *col_reco1, LCCollection *col_reco2) {
+    std::vector<std::pair<ReconstructedParticle*, ReconstructedParticle*> > out_pairs;
+    ReconstructedParticle* paired_reco2;
+    float deltaR, deltaR_min;
+    int matched_reco_id;
+    std::vector<Bool_t> v_matched_reco2; // preventing matching the same reco2 to differeng reco1
+    for (int j = 0; j < col_reco2->getNumberOfElements(); j++)
+        v_matched_reco2.push_back(false);
+    for (int i = 0; i < col_reco1->getNumberOfElements(); i++) {
+        ReconstructedParticle *p_reco1 = dynamic_cast<EVENT::ReconstructedParticle*>(col_reco1->getElementAt(i));
+        TLorentzVector lv_reco1 = TLorentzVector(p_reco1->getMomentum(), p_reco1->getEnergy());
+        deltaR_min = -1;
+        for (int j = 0; j < col_reco2->getNumberOfElements();j++) {
+            if (v_matched_reco2.at(j)) continue; // skip matched reco2
+            ReconstructedParticle *p_reco2 = dynamic_cast<EVENT::ReconstructedParticle*>(col_reco2->getElementAt(j));
+            TLorentzVector lv_reco2 = TLorentzVector(p_reco2->getMomentum(), p_reco2->getEnergy());
+            deltaR = lv_reco1.DeltaR(lv_reco2);
+            if (deltaR_min < 0 || deltaR < deltaR_min) {
+                deltaR_min = deltaR;
+                paired_reco2 = p_reco2;
+                matched_reco_id = j;
+            }
+        }
+        v_matched_reco2.at(matched_reco_id) = true;
+        out_pairs.push_back(std::make_pair(p_reco1, paired_reco2));
+    }
+    return out_pairs;
 }
